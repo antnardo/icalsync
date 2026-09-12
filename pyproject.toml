@@ -1,0 +1,82 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "icalsync"
+dynamic = ["version"]
+description = "Pose des événements à clé stable dans un agenda : Calendar (macOS, via EventKit) ou fichier iCalendar."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "antnardo", email = "antnardo@users.noreply.github.com" }]
+keywords = ["calendar", "icalendar", "ics", "eventkit", "macos", "icloud", "sync"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: French",
+    "Operating System :: MacOS",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Office/Business :: Scheduling",
+    "Typing :: Typed",
+]
+dependencies = [
+    # Sérialisation iCalendar : gestion des fuseaux (TZID + VTIMEZONE), des
+    # journées entières et de l'échappement, que les gabarits texte maison
+    # faisaient à moitié.
+    "icalendar>=6.0",
+]
+
+[project.optional-dependencies]
+# Écriture directe dans Calendar. Ne s'installe que sous macOS.
+mac = ["pyobjc-framework-EventKit>=10.0; sys_platform == 'darwin'"]
+
+[project.urls]
+Homepage = "https://github.com/antnardo/icalsync"
+Documentation = "https://github.com/antnardo/icalsync/blob/main/docs/DOC.md"
+Repository = "https://github.com/antnardo/icalsync"
+Issues = "https://github.com/antnardo/icalsync/issues"
+Changelog = "https://github.com/antnardo/icalsync/blob/main/CHANGELOG.md"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+    "mypy>=1.11",
+]
+
+[tool.hatch.version]
+path = "src/icalsync/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/icalsync"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF", "N", "C4", "PTH", "RET"]
+# La prose emploie des tirets typographiques et des caractères accentués.
+ignore = ["RUF001", "RUF002", "RUF003"]
+
+[tool.mypy]
+files = ["src"]
+# Le dossier parent porte un __init__.py : sans bases explicites, mypy voit le
+# paquet deux fois, sous deux noms.
+mypy_path = "src"
+explicit_package_bases = true
+ignore_missing_imports = true
+strict = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
