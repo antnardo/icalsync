@@ -6,6 +6,8 @@ GitHub, à laquelle la distribution est jointe ; rien n'est publié sur PyPI.
 
 ## [Non publié]
 
+## [0.1.1] — 2026-09-13
+
 ### Corrigé
 
 - Les journées entières passaient par le fuseau de l'appelant alors que
@@ -24,5 +26,6 @@ GitHub, à laquelle la distribution est jointe ; rien n'est publié sur PyPI.
 - `Agenda` : écriture directe dans Calendar sous macOS par EventKit, événements
   reconnus par le champ URL `schema://cle`.
 
-[Non publié]: https://github.com/antnardo/icalsync/compare/v0.1.0...HEAD
+[Non publié]: https://github.com/antnardo/icalsync/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/antnardo/icalsync/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/antnardo/icalsync/releases/tag/v0.1.0

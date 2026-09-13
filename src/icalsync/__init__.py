@@ -22,7 +22,7 @@ from icalsync.modeles import (
 )
 from icalsync.plan import Plan, Planificateur, bornes, indexer
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __all__ = [
     "FUSEAU_PAR_DEFAUT",
