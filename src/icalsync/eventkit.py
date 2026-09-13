@@ -14,6 +14,13 @@ L'autorisation est accordée à l'application **responsable** du processus. Un
 script lancé depuis Terminal se voit demander l'accès au nom de Terminal ; lancé
 depuis une application sans clé d'usage du calendrier (VS Code, un agent), la
 demande est refusée sans fenêtre. C'est ce que dit `AccesRefuseError`.
+
+Deux notions de temps cohabitent. Un créneau est un instant : `fuseau` ne sert
+qu'à lire les `datetime` naïfs. Une journée entière est un **jour flottant** :
+Calendar la range dans le fuseau du système, quel que soit celui de l'appelant,
+et son instant de début est minuit local. Poser minuit de Paris sur une machine
+en UTC tombait la veille à 23 h, et la journée reculait d'un jour ; c'est
+pourquoi les journées passent par l'heure locale, jamais par `fuseau`.
 """
 
 import threading
@@ -56,6 +63,15 @@ def _minuit(jour: date, fuseau: ZoneInfo) -> datetime:
     return datetime(jour.year, jour.month, jour.day, tzinfo=fuseau)
 
 
+def _minuit_local(jour: date) -> datetime:
+    """Minuit dans le fuseau du système : un `datetime` naïf, que `timestamp()` y lit."""
+    return datetime(jour.year, jour.month, jour.day)
+
+
+def _jour_local(valeur: Any) -> date:
+    return datetime.fromtimestamp(round(valeur.timeIntervalSince1970())).date()
+
+
 def _vers_nsdate(instant: datetime) -> Any:
     return NSDate.dateWithTimeIntervalSince1970_(instant.timestamp())
 
@@ -82,16 +98,14 @@ class ConvertisseurEK:
             objet.setStartDate_(_vers_nsdate(situe.debut))
             objet.setEndDate_(_vers_nsdate(situe.fin))
         else:
-            # Journée entière : Calendar attend une fin à 23:59:59 du dernier
-            # jour, pas au minuit suivant, qui déborderait d'un jour.
+            # Journée entière : jour flottant, donc minuit **local**, et une fin
+            # à 23:59:59 du dernier jour, pas au minuit suivant, qui déborderait.
             objet.setAllDay_(True)
-            objet.setStartDate_(_vers_nsdate(_minuit(situe.debut, self._fuseau)))
-            fin_incluse = _minuit(situe.fin + timedelta(days=1), self._fuseau) - _UNE_SECONDE
+            objet.setStartDate_(_vers_nsdate(_minuit_local(situe.debut)))
+            fin_incluse = _minuit_local(situe.fin + timedelta(days=1)) - _UNE_SECONDE
             objet.setEndDate_(_vers_nsdate(fin_incluse))
 
     def vers_evenement(self, objet: Any, cle: str) -> Evenement:
-        debut = _depuis_nsdate(objet.startDate(), self._fuseau)
-        fin = _depuis_nsdate(objet.endDate(), self._fuseau)
         champs = {
             "cle": cle,
             "titre": str(objet.title() or ""),
@@ -99,10 +113,17 @@ class ConvertisseurEK:
             "notes": str(objet.notes() or ""),
         }
         if objet.isAllDay():
-            # EventKit rend une fin à 23:59:59 du dernier jour ; reculer d'une
-            # seconde couvre aussi un magasin qui la donnerait au minuit suivant.
-            dernier = max(debut.date(), (fin - _UNE_SECONDE).date())
-            return Evenement(debut=debut.date(), fin=dernier, **champs)
+            # Jours flottants, lus en heure locale. EventKit rend une fin à
+            # 23:59:59 du dernier jour ; reculer d'une seconde couvre aussi un
+            # magasin qui la donnerait au minuit suivant.
+            premier = _jour_local(objet.startDate())
+            dernier = (
+                datetime.fromtimestamp(round(objet.endDate().timeIntervalSince1970()))
+                - _UNE_SECONDE
+            ).date()
+            return Evenement(debut=premier, fin=max(premier, dernier), **champs)
+        debut = _depuis_nsdate(objet.startDate(), self._fuseau)
+        fin = _depuis_nsdate(objet.endDate(), self._fuseau)
         return Evenement(debut=debut, fin=fin, **champs)
 
 

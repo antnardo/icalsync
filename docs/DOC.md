@@ -36,6 +36,10 @@ ramenés à un seul.
 Toutes les écritures d'un appel sont validées en une fois (`commit`) : Calendar
 ne voit rien tant que l'appel n'est pas au bout.
 
+Une journée entière est un jour flottant : Calendar la range dans le fuseau du
+système, et `fuseau` n'y intervient pas. Un créneau, lui, est un instant, et
+`fuseau` ne sert qu'à lire les `datetime` naïfs.
+
 ## iCalendar
 
 `ExportICS(schema, fuseau=…, nom_calendrier="", prodid=…)` avec `composer()` qui

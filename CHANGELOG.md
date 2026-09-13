@@ -6,6 +6,12 @@ GitHub, à laquelle la distribution est jointe ; rien n'est publié sur PyPI.
 
 ## [Non publié]
 
+### Corrigé
+
+- Les journées entières passaient par le fuseau de l'appelant alors que
+  Calendar les range dans celui du système : sur une machine hors
+  Europe/Paris, elles reculaient d'un jour. Vu en CI, sur les exécuteurs en UTC.
+
 ## [0.1.0] — 2026-09-13
 
 ### Ajouté
