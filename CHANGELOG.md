@@ -1,11 +1,14 @@
-# Changelog
+# Journal des modifications
 
-Ce fichier suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le
-projet respecte [SemVer](https://semver.org/lang/fr/).
+Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le
+versionnage sémantique. Chaque version est un tag `v<version>` et une release
+GitHub, à laquelle la distribution est jointe ; rien n'est publié sur PyPI.
 
-## [Unreleased]
+## [Non publié]
 
-### Added
+## [0.1.0] — 2026-09-13
+
+### Ajouté
 
 - Modèle `Evenement` à clé stable, horaire ou journée entière.
 - `Planificateur` : le plan de synchronisation (créer, modifier, supprimer) à
@@ -14,3 +17,6 @@ projet respecte [SemVer](https://semver.org/lang/fr/).
   la clé.
 - `Agenda` : écriture directe dans Calendar sous macOS par EventKit, événements
   reconnus par le champ URL `schema://cle`.
+
+[Non publié]: https://github.com/antnardo/icalsync/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/antnardo/icalsync/releases/tag/v0.1.0

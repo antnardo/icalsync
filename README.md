@@ -44,9 +44,12 @@ langue.
 
 ## Installation
 
+Le paquet n'est pas sur PyPI, par choix : il s'installe depuis GitHub, la
+distribution étant jointe à chaque release.
+
 ```bash
-pip install icalsync            # export iCalendar seulement
-pip install "icalsync[mac]"     # plus l'écriture dans Calendar (macOS)
+pip install "icalsync @ git+https://github.com/antnardo/icalsync"          # export iCalendar seulement
+pip install "icalsync[mac] @ git+https://github.com/antnardo/icalsync"     # plus l'écriture dans Calendar (macOS)
 ```
 
 ## Usage
